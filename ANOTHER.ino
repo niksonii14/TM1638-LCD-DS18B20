@@ -64,27 +64,34 @@ void loop() {
   }
 
   // Display temperatures on TM1638
-  char displayData[9] = "        "; // 8 characters for TM1638
-  for (int i = 0; i < numberOfDevices && i < 2; i++) { // Max 2 sensors
-    if (sensors.getAddress(tempDeviceAddress, i)) {
-      float tempC = sensors.getTempC(tempDeviceAddress);
+  // Display temperatures on TM1638
+char displayData[9] = "        "; // 8 characters for TM1638
+for (int i = 0; i < numberOfDevices && i < 2; i++) { // Max 2 sensors
+  if (sensors.getAddress(tempDeviceAddress, i)) {
+    float tempC = sensors.getTempC(tempDeviceAddress);
 
-      // Convert temperature to integer with 2 decimal places
-      int tempInt = (int)(tempC * 100); // Scale temperature by 100 for two decimal places
-      int tempWhole = tempInt / 100;  // Whole part
-      int tempDecimal = tempInt %100;  // Decimal part
+    // Convert temperature to integer with 2 decimal places
+    int tempInt = (int)(tempC * 100); // Scale temperature by 100 for two decimal places
+    int tempWhole = tempInt / 100;  // Whole part
+    int tempDecimal = tempInt % 100;  // Decimal part
 
-      
-      char tempStr[6];  
-      snprintf(tempStr, sizeof(tempStr), "%02d.%02d", tempWhole, tempDecimal); // Format as "xx.xx"
+    char tempStr[5];  
+    snprintf(tempStr, sizeof(tempStr), "%02d.%02d", tempWhole, tempDecimal); // Format as "xx.xx"
 
-      
-      for (int j = 0; j < 4; j++) {
-        displayData[i * 4 + j] = tempStr[j]; // Place 5 characters for each sensor
-      }
+    // Insert the temperature string into displayData
+    int offset = i * 4 + i; // Offset adjusts for space between
+    for (int j = 0; j < 4; j++) {
+      displayData[offset + j] = tempStr[j];
+    }
+
+    // Add a space between the two values
+    if (i == 0) {
+      displayData[4] = ' '; // Add a space at position 4
     }
   }
+}
 
+// displayData[9]=' ';
   // Send formatted data to TM1638
   module.displayText(displayData);
 
